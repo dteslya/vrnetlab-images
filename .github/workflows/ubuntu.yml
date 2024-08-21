@@ -36,7 +36,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Ubuntu image
-        working-directory: ubuntu
+        working-directory: vrnetlab/ubuntu
         run: |
           version=${{ matrix.ubuntu_version }}
           filename="${version}-ubuntu-cloud.qcow2"
@@ -44,7 +44,7 @@ jobs:
           echo "Download complete: $filename"
 
       - name: Build Docker image
-        working-directory: ubuntu
+        working-directory: vrnetlab/ubuntu
         run: |
           make
 
