@@ -10,7 +10,7 @@ on:
       ubuntu_versions:
         description: "Ubuntu versions to build (space-separated)"
         required: false
-        default: [focal, jammy, noble]
+        default: '["focal", "jammy", "noble"]'
 
 jobs:
   build:
