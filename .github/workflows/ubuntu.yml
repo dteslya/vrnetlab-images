@@ -9,7 +9,7 @@ on:
     inputs:
       ubuntu_versions:
         description: "Ubuntu versions to build (space-separated)"
-        required: true
+        required: false
         default: "focal jammy noble"
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ubuntu_version: ${{ fromJson(format('[{0}]', join(github.event.inputs.ubuntu_versions || 'focal jammy noble', ','))) }}
+        ubuntu_version: ${{ github.event.inputs.ubuntu_versions != '' && split(github.event.inputs.ubuntu_versions, ' ') || split(github.event.inputs.ubuntu_versions.default, ' ') }}
     permissions:
       contents: read
       packages: write
