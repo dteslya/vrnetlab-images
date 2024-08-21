@@ -1,0 +1,41 @@
+name: Build and Push Ubuntu vrnetlab Image
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout vrnetlab repository
+        uses: actions/checkout@v3
+        with:
+          repository: hellt/vrnetlab
+          path: vrnetlab
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Ubuntu image and build Docker image
+        run: |
+          cd vrnetlab/ubuntu
+          ./download.sh
+          make
+
+      - name: Tag and push image to GitHub Container Registry
+        run: |
+          docker tag vrnetlab/vr-ubuntu:jammy ghcr.io/${{ github.repository }}/ubuntu-vrnetlab:latest
+          docker push ghcr.io/${{ github.repository }}/ubuntu-vrnetlab:latest
+
+      - name: Clean up
+        run: |
+          rm -rf vrnetlab
