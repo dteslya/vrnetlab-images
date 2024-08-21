@@ -6,38 +6,53 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      ubuntu_versions:
+        description: "Ubuntu versions to build (space-separated)"
+        required: true
+        default: "focal jammy noble"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ubuntu_version: ${{ fromJson(format('[{0}]', join(github.event.inputs.ubuntu_versions || 'focal jammy noble', ','))) }}
     permissions:
       contents: read
       packages: write
 
     steps:
       - name: Checkout vrnetlab repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: hellt/vrnetlab
           path: vrnetlab
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Ubuntu image and build Docker image
+      - name: Download Ubuntu image
+        working-directory: ubuntu
         run: |
-          cd vrnetlab/ubuntu
-          ./download.sh
+          version=${{ matrix.ubuntu_version }}
+          filename="${version}-ubuntu-cloud.qcow2"
+          curl -Lo "$filename" "https://cloud-images.ubuntu.com/$version/current/${version}-server-cloudimg-amd64.img"
+          echo "Download complete: $filename"
+
+      - name: Build Docker image
+        working-directory: ubuntu
+        run: |
           make
 
       - name: Tag and push image to GitHub Container Registry
         run: |
-          docker tag vrnetlab/vr-ubuntu:jammy ghcr.io/${{ github.repository }}/ubuntu-vrnetlab:latest
-          docker push ghcr.io/${{ github.repository }}/ubuntu-vrnetlab:latest
+          docker tag vrnetlab/vr-ubuntu:${{ matrix.ubuntu_version }} ghcr.io/${{ github.repository }}/ubuntu-vrnetlab:${{ matrix.ubuntu_version }}
+          docker push ghcr.io/${{ github.repository }}/ubuntu-vrnetlab:${{ matrix.ubuntu_version }}
 
       - name: Clean up
         run: |
