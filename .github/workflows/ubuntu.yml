@@ -8,16 +8,15 @@ on:
   workflow_dispatch:
     inputs:
       ubuntu_versions:
-        description: "Ubuntu versions to build (space-separated)"
+        description: 'Ubuntu versions to build (as JSON array, e.g., ["focal","jammy","noble"])'
         required: false
-        default: '["focal", "jammy", "noble"]'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ubuntu_version: ${{ fromJson(github.event.inputs.ubuntu_versions || github.event.inputs.ubuntu_versions.default ) }}
+        ubuntu_version: ${{ fromJson(github.event.inputs.ubuntu_versions || '["focal", "jammy", "noble"]') }}
     permissions:
       contents: read
       packages: write
