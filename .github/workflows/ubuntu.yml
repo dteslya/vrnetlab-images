@@ -10,14 +10,14 @@ on:
       ubuntu_versions:
         description: "Ubuntu versions to build (space-separated)"
         required: false
-        default: "focal jammy noble"
+        default: [focal, jammy, noble]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ubuntu_version: ${{ fromJson(format('["{}"]', join(github.event.inputs.ubuntu_versions != '' && github.event.inputs.ubuntu_versions || github.event.inputs.ubuntu_versions.default, '","'))) }}
+        ubuntu_version: ${{ fromJson(github.event.inputs.ubuntu_versions) }}
     permissions:
       contents: read
       packages: write
