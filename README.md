@@ -1,6 +1,6 @@
 # vrnetlab Docker Images
 
-This repository contains Github Actions workflow that builds and publishes [vrnetlab](https://github.com/hellt/vrnetlab) Ubuntu images. The resulting images can be used with [containerlab](https://containerlab.dev/).
+This repository contains Github Actions workflow that builds and publishes [vrnetlab](https://github.com/hellt/vrnetlab) Ubuntu and OpenBSD images. The resulting images can be used with [containerlab](https://containerlab.dev/).
 
 ## How to use with containerlab
 

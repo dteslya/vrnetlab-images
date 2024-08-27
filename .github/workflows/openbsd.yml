@@ -1,0 +1,73 @@
+---
+name: Build and Push OpenBSD vrnetlab Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      openbsd_releases:
+        description: 'OpenBSD releases to build (as JSON array, e.g., ["7.3","7.4","7.5"])'
+        required: false
+      disk_size:
+        description: Disk size in GB
+        required: false
+        default: 2
+      mirror:
+        description: OpenBSD mirror URL
+        required: false
+        default: https://cloudflare.cdn.openbsd.org/pub/OpenBSD
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        openbsd_release: ${{ fromJson(github.event.inputs.openbsd_releases || '["7.3", "7.4", "7.5"]') }}
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout openbsd-cloud-image repository
+        uses: actions/checkout@v4
+        with:
+          repository: hcartiaux/openbsd-cloud-image
+          path: openbsd-cloud-image
+
+      - name: Checkout vrnetlab repository
+        uses: actions/checkout@v4
+        with:
+          repository: hellt/vrnetlab
+          path: vrnetlab
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build OpenBSD qcow2 image
+        working-directory: openbsd-cloud-image
+        run: |
+          release=${{ matrix.openbsd_release }}
+          sudo apt-get update ; sudo apt-get install -y signify-openbsd signify-openbsd-keys qemu-system
+          ./build_openbsd_qcow2.sh -r ${release} --image-file openbsd-${release}-$(date '+%Y-%m-%d').qcow2 \
+            --size '${{inputs.disk_size}}' --disklabel "custom/disklabel.cloud" --sets "-game*.tgz -x*.tgz" \
+            --allow_root_ssh no --mirror '${{inputs.mirror}}' -b
+          mv images/openbsd-${release}-$(date '+%Y-%m-%d').qcow2 ../vrnetlab/openbsd
+
+      - name: Build Docker image
+        working-directory: vrnetlab/openbsd
+        run: |
+          make
+
+      - name: Tag and push image to GitHub Container Registry
+        run: |
+          docker tag vrnetlab/vr-openbsd:${{ matrix.openbsd_release }} \
+            ghcr.io/${{ github.repository }}/openbsd-vrnetlab:${{ matrix.openbsd_release }}
+          docker push ghcr.io/${{ github.repository }}/openbsd-vrnetlab:${{ matrix.openbsd_release }}
+
+      - name: Clean up
+        run: |
+          rm -rf openbsd-cloud-image
+          rm -rf vrnetlab
