@@ -38,7 +38,7 @@ jobs:
       - name: Change disk size in Dockerfile
         working-directory: vrnetlab/ubuntu/docker
         run: |
-          sed -i '0,/ARG\s\+DISK_SIZE=[0-9]\+G/s//ARG DISK_SIZE=${{ inputs.disk_size }}G/'
+          sed -i '0,/ARG\s\+DISK_SIZE=[0-9]\+G/s//ARG DISK_SIZE=${{ inputs.disk_size }}G/' Dockerfile
 
       - name: Download Ubuntu image
         working-directory: vrnetlab/ubuntu
