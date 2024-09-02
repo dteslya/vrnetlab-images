@@ -6,6 +6,10 @@ on:
       ubuntu_versions:
         description: 'Ubuntu versions to build (as JSON array, e.g., ["focal","jammy","noble"])'
         required: false
+      disk_size:
+        description: Disk size in GB
+        required: false
+        default: 10
 
 jobs:
   build:
@@ -30,6 +34,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Change disk size in Dockerfile
+        working-directory: vrnetlab/ubuntu/docker
+        run: |
+          sed -i '0,/ARG\s\+DISK_SIZE=[0-9]\+G/s//ARG DISK_SIZE=${{ inputs.disk_size }}G/'
 
       - name: Download Ubuntu image
         working-directory: vrnetlab/ubuntu
