@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       openbsd_releases:
-        description: 'OpenBSD releases to build (as JSON array, e.g., ["7.3","7.4","7.5"])'
+        description: 'OpenBSD releases to build (as JSON array, e.g., ["7.6","7.7"])'
         required: false
       disk_size:
         description: Disk size in GB
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        openbsd_release: ${{ fromJson(github.event.inputs.openbsd_releases || '["7.3", "7.4", "7.5"]') }}
+        openbsd_release: ${{ fromJson(github.event.inputs.openbsd_releases || '["7.6", "7.7"]') }}
     permissions:
       contents: read
       packages: write
@@ -63,7 +63,7 @@ jobs:
 
       - name: Tag and push image to GitHub Container Registry
         run: |
-          docker tag vrnetlab/vr-openbsd:${{ matrix.openbsd_release }} \
+          docker tag vrnetlab/openbsd_openbsd:${{ matrix.openbsd_release }} \
             ghcr.io/${{ github.repository }}/openbsd-vrnetlab:${{ matrix.openbsd_release }}
           docker push ghcr.io/${{ github.repository }}/openbsd-vrnetlab:${{ matrix.openbsd_release }}
 
