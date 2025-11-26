@@ -25,7 +25,7 @@ jobs:
       - name: Checkout vrnetlab repository
         uses: actions/checkout@v4
         with:
-          repository: hellt/vrnetlab
+          repository: srl-labs/vrnetlab
           path: vrnetlab
 
       - name: Login to GitHub Container Registry

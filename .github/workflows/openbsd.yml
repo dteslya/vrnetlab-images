@@ -10,7 +10,7 @@ on:
       disk_size:
         description: Disk size in GB
         required: false
-        default: 2
+        default: 4
       mirror:
         description: OpenBSD mirror URL
         required: false
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        openbsd_release: ${{ fromJson(github.event.inputs.openbsd_releases || '["7.6", "7.7"]') }}
+        openbsd_release: ${{ fromJson(github.event.inputs.openbsd_releases || '["7.7", "7.8"]') }}
     permissions:
       contents: read
       packages: write
@@ -36,7 +36,7 @@ jobs:
       - name: Checkout vrnetlab repository
         uses: actions/checkout@v4
         with:
-          repository: hellt/vrnetlab
+          repository: srl-labs/vrnetlab
           path: vrnetlab
 
       - name: Login to GitHub Container Registry
