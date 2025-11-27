@@ -54,7 +54,7 @@ jobs:
           ./build_openbsd_qcow2.sh -r ${release} --image-file openbsd-${release}-$(date '+%Y-%m-%d').qcow2 \
             --size '${{inputs.disk_size}}' --disklabel "custom/disklabel.cloud" --sets "-game*.tgz -x*.tgz" \
             --allow_root_ssh no --mirror '${{inputs.mirror}}' -b
-          mv images/openbsd-${release}-$(date '+%Y-%m-%d').qcow2 ../vrnetlab/openbsd
+          mv images/openbsd-${release}-$(date '+%Y-%m-%d').qcow2 ../vrnetlab/openbsd/openbsd-min_v${release}_$(date '+%Y-%m-%d').qcow2
 
       - name: Build Docker image
         working-directory: vrnetlab/openbsd
