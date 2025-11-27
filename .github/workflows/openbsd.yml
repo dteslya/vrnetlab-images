@@ -58,7 +58,9 @@ jobs:
 
       - name: Build Docker image
         working-directory: vrnetlab/openbsd
+        # sed fixes the Makefile https://github.com/srl-labs/vrnetlab/issues/364
         run: |
+          sed  's/^ \+/\\t/g' -i Makefile
           make
 
       - name: Tag and push image to GitHub Container Registry
