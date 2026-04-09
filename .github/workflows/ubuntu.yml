@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout vrnetlab repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: srl-labs/vrnetlab
           path: vrnetlab

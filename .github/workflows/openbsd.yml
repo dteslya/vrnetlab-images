@@ -28,13 +28,13 @@ jobs:
 
     steps:
       - name: Checkout openbsd-cloud-image repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: hcartiaux/openbsd-cloud-image
           path: openbsd-cloud-image
 
       - name: Checkout vrnetlab repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: srl-labs/vrnetlab
           path: vrnetlab
