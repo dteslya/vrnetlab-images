@@ -55,7 +55,7 @@ jobs:
 
       - name: Tag and push image to GitHub Container Registry
         run: |
-          docker tag vrnetlab/vr-ubuntu:${{ matrix.ubuntu_version }} \
+          docker tag vrnetlab/canonical_ubuntu:${{ matrix.ubuntu_version }} \
             ghcr.io/${{ github.repository }}/ubuntu-vrnetlab:${{ matrix.ubuntu_version }}
           docker push ghcr.io/${{ github.repository }}/ubuntu-vrnetlab:${{ matrix.ubuntu_version }}
 
